@@ -1,24 +1,44 @@
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Z1 {
+    public static Course findCourse(List<Course> courses, String name) throws CourseNotFoundException {
+        for (Course c : courses) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        throw new CourseNotFoundException("Курс '" + name + "' не найден");
+    }
+
     public static void main(String[] args) {
-        Map<String, Music> map = new HashMap<>();
+        List<Course> courses = new ArrayList<>();
 
-        map.put("Rock1", new Rock("Rock1", 1, 180, true));
-        map.put("Rock2", new Rock("Rock2", 2, 200, false));
-        map.put("Rock3", new Rock("Rock3", 3, 210, true));
+        try {
+            courses.add(new Course("Java", "Иванов", 40, 1000, 2));
+            courses.add(new Course("Python", "Петров", -10, 1500, 5));
+        } catch (InvalidCourseDataException e) {
+            System.out.println("Ошибка при создании: " + e.getMessage());
+        }
 
-        map.put("Classic1", new Classical("Classic1", 4, 300, true));
-        map.put("Classic2", new Classical("Classic2", 5, 400, false));
-        map.put("Classic3", new Classical("Classic3", 6, 350, true));
+        try {
+            Course javaCourse = findCourse(courses, "Java");
+            javaCourse.enroll("Алексей");
+            javaCourse.enroll("Мария");
+            System.out.println("Запись прошла успешно.");
 
-        map.put("Jazz1", new Jazz("Jazz1", 7, 250, true));
-        map.put("Jazz2", new Jazz("Jazz2", 8, 280, true));
+            javaCourse.enroll("Иван");
+        } catch (CourseNotFoundException | EnrollmentException e) {
+            System.out.println("Ошибка работы с курсом: " + e.getMessage());
+        }
 
-        for (Map.Entry<String, Music> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + "  " + entry.getValue());
+        try {
+            Course cPlusPlus = findCourse(courses, "C++");
+        } catch (CourseNotFoundException e) {
+            System.out.println("Ошибка поиска: " + e.getMessage());
+        } finally {
+            System.out.println("Работа системы завершена.");
         }
     }
 }
