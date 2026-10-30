@@ -1,44 +1,31 @@
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 public class Z1 {
-    public static Course findCourse(List<Course> courses, String name) throws CourseNotFoundException {
-        for (Course c : courses) {
-            if (c.getName().equals(name)) {
-                return c;
-            }
-        }
-        throw new CourseNotFoundException("Курс '" + name + "' не найден");
-    }
-
     public static void main(String[] args) {
-        List<Course> courses = new ArrayList<>();
+        File file = new File("holiday.txt");
 
-        try {
-            courses.add(new Course("Java", "Иванов", 40, 1000, 2));
-            courses.add(new Course("Python", "Петров", -10, 1500, 5));
-        } catch (InvalidCourseDataException e) {
-            System.out.println("Ошибка при создании: " + e.getMessage());
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write("Мой любимый праздник - Новый год.");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
-        try {
-            Course javaCourse = findCourse(courses, "Java");
-            javaCourse.enroll("Алексей");
-            javaCourse.enroll("Мария");
-            System.out.println("Запись прошла успешно.");
+        System.out.println("Имя файла: " + file.getName());
+        System.out.println("Путь: " + file.getAbsolutePath());
+        System.out.println("Размер: " + file.length() + " байт");
 
-            javaCourse.enroll("Иван");
-        } catch (CourseNotFoundException | EnrollmentException e) {
-            System.out.println("Ошибка работы с курсом: " + e.getMessage());
-        }
-
-        try {
-            Course cPlusPlus = findCourse(courses, "C++");
-        } catch (CourseNotFoundException e) {
-            System.out.println("Ошибка поиска: " + e.getMessage());
-        } finally {
-            System.out.println("Работа системы завершена.");
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
